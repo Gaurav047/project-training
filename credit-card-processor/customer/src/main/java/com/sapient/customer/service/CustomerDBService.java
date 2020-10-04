@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,30 @@ public class CustomerDBService {
 			cp1.add(c1);
 		}
 		return cp1;
+	}
+	
+	public JSONObject getLastMonthMaxTransactionWithMerchant(String ccNumber){
+		Sort sort = Sort.by(Sort.Direction.DESC, "transactionAmount");
+		List<Transaction> tr = this.trepo.findByCcNumber(ccNumber, sort);
+		Transaction ret = null;
+		for (Transaction temp : tr) {
+			if (temp.getTransactionDate().getMonth().compareTo(LocalDate.now().getMonth()) < 0) {
+				ret = temp;
+				break;
+			}
+		}
+		JSONObject jo = new JSONObject();
+		jo.put("credit_card", ccNumber);
+		jo.put("month", ret.getTransactionDate().getMonth().getDisplayName(TextStyle.SHORT, Locale.US));
+		jo.put("amount", ret.getTransactionAmount());
+		jo.put("merchant", ret.getMerchantId());
+		return jo;
+	}
+	
+	public JSONObject getLastMonthMaxTransactionWithoutMerchant(String ccNumber){
+		JSONObject jo = getLastMonthMaxTransactionWithMerchant(ccNumber);
+		jo.remove("merchant");
+		return jo;
 	}
 
 }

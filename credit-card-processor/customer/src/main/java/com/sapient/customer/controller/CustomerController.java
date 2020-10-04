@@ -5,7 +5,11 @@ import java.util.List;
 
 import javax.websocket.server.PathParam;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,11 +82,28 @@ public class CustomerController {
 	 * This api is developed by Gaurav Kumar
 	 * It fetches the maximum amount spent for all credit cards for the transactions done in the last month.
 	 * */
-	@GetMapping(path = "/customer/creditcards/lastmonth/max") /// api/customer/creditcards/lastmonth/max
+	@GetMapping(path = "/customer/creditcards/lastmonth/max",produces=MediaType.APPLICATION_JSON_VALUE) /// api/customer/creditcards/lastmonth/max
 	//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
-	public List<CustomPOJO_A> getMaxLastMonth() {
-		List<CustomPOJO_A> Lcp = getLastXnumberOfExpenses("1");
-		return Lcp;
+	public ResponseEntity<Object> getMaxLastMonth() {
+		List<CreditCard> creditCards = this.service.getAllCards(this.userEmail);
+		List<JSONObject> Lcp = new ArrayList<JSONObject>();
+		for (CreditCard CC : creditCards) {
+			JSONObject lt = service.getLastMonthMaxTransactionWithoutMerchant(CC.getCreditCardNo());
+			Lcp.add(lt);
+		}
+		return new ResponseEntity<Object>(Lcp, HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/customer/creditcards/lastmonth/max_merchant",produces=MediaType.APPLICATION_JSON_VALUE) /// api/customer/creditcards/lastmonth/max
+	//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
+	public ResponseEntity<Object> getMaxLastMonthMax() {
+		List<CreditCard> creditCards = this.service.getAllCards(this.userEmail);
+		List<JSONObject> Lcp = new ArrayList<JSONObject>();
+		for (CreditCard CC : creditCards) {
+			JSONObject lt = service.getLastMonthMaxTransactionWithMerchant(CC.getCreditCardNo());
+			Lcp.add(lt);
+		}
+		return new ResponseEntity<Object>(Lcp, HttpStatus.OK);
 	}
 	
 }
