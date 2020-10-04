@@ -1,0 +1,23 @@
+pipeline {
+   agent any
+
+   tools {
+      // Install the Maven version configured as "M3" and add it to the path.
+      maven 'M3'
+   }
+
+   stages {
+      stage('Package') {
+         steps {
+	    	bat 'mvn clean install'
+     	 }
+     }
+      stage('Execute') {
+         steps {
+	    	bat 'start mvn exec:java -pl admin -Dexec:mainClass=AdminTransaction' 
+	   		bat 'start mvn exec:java -pl customer -Dexec:mainClass=CustomerApplication'
+	    	bat 'start mvn exec:java -pl transaction -Dexec:mainClass=TransactionApplication'
+      	}
+     }
+   }
+}
