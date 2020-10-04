@@ -72,4 +72,17 @@ public class CustomerController {
 		}
 		return Lcp;
 	}
+	
+	
+	/*
+	 * This api is developed by Gaurav Kumar
+	 * It fetches the maximum amount spent for all credit cards for the transactions done in the last month.
+	 * */
+	@GetMapping(path = "/customer/creditcards/lastmonth/max") /// api/customer/creditcards/lastmonth/max
+	//@PreAuthorize("hasRole('ROLE_CUSTOMER')")
+	public List<CustomPOJO_A> getMaxLastMonth() {
+		List<CustomPOJO_A> Lcp = getLastXnumberOfExpenses("1");
+		return Lcp;
+	}
+	
 }

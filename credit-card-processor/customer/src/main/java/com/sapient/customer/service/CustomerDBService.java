@@ -76,6 +76,7 @@ public class CustomerDBService {
 		return optionalObj.get(); // scope for change
 	}
 
+	
 	public List<CustomPOJO_B> getTransactionByCcNumber(String ccNumber, int number) {
 		Sort sort = Sort.by(Sort.Direction.DESC, "transactionAmount");
 		List<Transaction> tr = this.trepo.findByCcNumber(ccNumber, sort);
@@ -95,4 +96,5 @@ public class CustomerDBService {
 		}
 		return cp1;
 	}
+
 }
